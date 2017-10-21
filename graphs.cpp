@@ -3,8 +3,8 @@
 #include <vector>
 #include <chrono>
 #include <random>
+#include <algorithm>
 #include "graphs.h"
-	
 
 Edge::Edge (int x, int y)
 {
@@ -26,15 +26,17 @@ bool Edge::isLoop()
 }
 
 	
-Graph::Graph(int order)
+Graph::Graph(int n)
 {
-	n = order;
-	adj = new int* [n];
+	this->n = n;
+	edge_count = 0;
 	for (int i = 0; i < n; i++)
 	{
-		adj[i] = new int [n];
+		std::vector<int> temp;
 		for (int j = 0; j < n; j++)
-			adj[i][j] = 0;
+			temp.push_back(0);
+
+		adj.push_back(temp);
 	}
 }
 
@@ -65,6 +67,8 @@ void Graph::addEdge(Edge new_edge)
 		}
 	adj[i-1][j-1] = 1;
 	adj[j-1][i-1] = 1;
+	
+	++edge_count;
 }
 
 bool Graph::hasEdge(int i, int j)
@@ -78,14 +82,11 @@ bool Graph::hasEdge(int i, int j)
 std::vector<int> Graph::connectedVertices(int vertex) //given a vertex on graph, returns a vector of connected vertices
 {	
 	std::vector<int> vertices;
-	int *p;
-	p = adj[vertex - 1];
 
 	for (int i = 0; i < n; i ++)
 	{
-		if (*p == 1)
+		if (adj[vertex - 1][i] == 1)
 			vertices.push_back(i+1);
-		p++;
 	}
 	return vertices;
 }
@@ -97,17 +98,16 @@ std::vector<int> Graph::vertexDegrees() //returns vector which contains degree o
 	for (int i = 0; i < n; i++)
 	{
 		int degree = 0;
-		int *p;
-		p = adj[i];
 		for (int j = 0; j < n; j++)
 		{	
-			if (*p == 1)
+			if (adj[i][j] == 1)
 				degree += 1;
-			p++;
 		}
 		
 		degrees.push_back(degree);
 	}
+	
+	std::sort(degrees.begin(), degrees.begin() + n);
 	
 	return degrees;
 }
@@ -132,6 +132,11 @@ void Graph::addEdge(int i, int j)
 int Graph::order()
 {
 	return n;
+}
+
+int Graph::edge_order()
+{
+	return edge_count;
 }
 
 void Graph::DFSsearch(int vertex, bool visited[])
@@ -159,13 +164,7 @@ bool Graph::isConnected(int vertex)
 
 	delete [] visited;
 	return 1;
-	
 }  
-
-Graph::~Graph() //class destructor, to release memory allocated for adj
-{	
-	delete [] adj;
-}
 
 
 Graph generateRandomGraph(int n, int edges) //randomly generates a graph given number of vertices
@@ -194,6 +193,3 @@ Graph generateRandomGraph(int n, int edges) //randomly generates a graph given n
 	
 	return randomGraph;
 }
-
-
-
