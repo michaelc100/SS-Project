@@ -11,6 +11,7 @@ class Ising;
 #include <chrono>
 #include <algorithm>
 #include <random>
+#include <math.h>
 
 class Edge
 {
@@ -44,6 +45,7 @@ class Ising
     public:
 	Ising(int, bool randomize = false);
 	std::vector<int> spins;
+	int getSpin(int);
 	void printSpins();
 };
 
@@ -53,8 +55,9 @@ class SpinGraph : public Graph, public Model
 {
     public:
 	SpinGraph(int, bool randomize = false);
-	double actionCont(int);
+	double actionCont(int, std::vector<int>);
 	double action();
+	bool update(double);
 };
 
 
