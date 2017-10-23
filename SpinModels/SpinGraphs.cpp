@@ -224,7 +224,7 @@ double SpinGraph<Ising>::actionCont(int vertex, std::vector<int> field)
 	for (int i = 0; i < nhbrs.size(); i++)
 	{
 		if (field[vertex - 1] != field[nhbrs[i] - 1])
-			action += 1.0; //0.5 is to avoid double counting 
+			action += 1.0; 
 	}
 
 	return action;
