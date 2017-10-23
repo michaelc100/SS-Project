@@ -4,6 +4,7 @@
 #include <chrono>
 #include <random>
 #include <algorithm>
+#include <math.h>
 #include "SpinGraphs.h"
 
 Edge::Edge (int x, int y)
@@ -189,6 +190,11 @@ Ising::Ising(int n, bool randomize)
 	}		
 }	
 
+int Ising::getSpin(int vertex)
+{
+	return spins[vertex-1];
+}
+
 void Ising::printSpins()
 {
 	for (int i = 0; i < spins.size(); i++)
@@ -202,15 +208,22 @@ SpinGraph<Model>::SpinGraph(int n, bool randomize):Graph(n), Model(n, randomize)
 
 }
 
-//actionCont will need to be modified and enable_if used depending on model
-template<class Model>
-double SpinGraph<Model>::actionCont(int vertex)
+/*if another model is used another actionCont will need to be defined
+
+template<>
+double SpinGraph<AnotherModel>::actionCont(int vertex)
+{
+}
+*/
+
+template<>
+double SpinGraph<Ising>::actionCont(int vertex, std::vector<int> field)
 {
 	std::vector<int> nhbrs = connectedVertices(vertex);
 	double action = 0.0;
 	for (int i = 0; i < nhbrs.size(); i++)
 	{
-		if (Model::spins[vertex - 1] != Model::spins[nhbrs[i] - 1])
+		if (field[vertex - 1] != field[nhbrs[i] - 1])
 			action += 0.5; //0.5 is to avoid double counting 
 	}
 
@@ -222,9 +235,40 @@ double SpinGraph<Model>::action()
 {
 	double totalAction = 0.0;
 	for (int i = 1; i <= order(); i++)
-		totalAction += actionCont(i);
+		totalAction += actionCont(i, Model::spins);
 	return totalAction;
 }
+
+template <class Model>
+bool SpinGraph<Model>::update(double beta)
+{
+	std::vector<int> temp = Model::spins;
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  	std::default_random_engine generator (seed);
+	std::uniform_int_distribution<int> dist(1, order());
+	int i = dist(generator);
+	temp[i-1] = -temp[i-1];
+	
+	double oldAction = actionCont(i, Model::spins);
+	double newAction = actionCont(i, temp);
+	if (oldAction > newAction)
+	{
+		Model::spins = temp;
+		return 1;
+	}
+
+	else
+	{
+		std::uniform_real_distribution<double> dist(0.0, 1.0);
+		double r = dist(generator);
+		double prob = exp(-beta*(newAction - oldAction));
+		if (r < prob)
+			Model::spins = temp;
+			return 1;
+	}	
+	return  0;
+} 	
+	 
 	
 
 Graph generateRandomGraph(int n, int edges) //randomly generates a graph given number of vertices
