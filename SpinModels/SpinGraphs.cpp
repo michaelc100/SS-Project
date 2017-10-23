@@ -224,7 +224,7 @@ double SpinGraph<Ising>::actionCont(int vertex, std::vector<int> field)
 	for (int i = 0; i < nhbrs.size(); i++)
 	{
 		if (field[vertex - 1] != field[nhbrs[i] - 1])
-			action += 0.5; //0.5 is to avoid double counting 
+			action += 1.0; //0.5 is to avoid double counting 
 	}
 
 	return action;
@@ -236,7 +236,7 @@ double SpinGraph<Model>::action()
 	double totalAction = 0.0;
 	for (int i = 1; i <= order(); i++)
 		totalAction += actionCont(i, Model::spins);
-	return totalAction;
+	return totalAction/2; //when calculated over the whole graph, must divide by two because of double counting
 }
 
 template <class Model>
@@ -273,7 +273,6 @@ bool SpinGraph<Model>::update(double beta)
 
 Graph generateRandomGraph(int n, int edges) //randomly generates a graph given number of vertices
 {
-	
 	Graph randomGraph(n);
 	
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -301,7 +300,6 @@ Graph generateRandomGraph(int n, int edges) //randomly generates a graph given n
 //make function template later
 SpinGraph<Ising> generateRandomIsingGraph(int n, int edges, int randomize)
 {
-	
 	SpinGraph<Ising> randomGraph(n, randomize);
 	
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
