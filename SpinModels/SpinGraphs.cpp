@@ -195,6 +195,8 @@ int Ising::getSpin(int vertex)
 	return spins[vertex-1];
 }
 
+
+
 void Ising::printSpins()
 {
 	for (int i = 0; i < spins.size(); i++)
@@ -228,6 +230,23 @@ double SpinGraph<Ising>::actionCont(int vertex, std::vector<int> field)
 	}
 
 	return action;
+}
+
+template <class Model>
+double SpinGraph<Model>::magnetisation()
+{
+	double mag = 0.0;
+	int size = order();
+	for (int i = 0; i < size; i++)
+		mag += Model::spins[i];
+	return mag/size;
+}
+
+template <class Model>
+double SpinGraph<Model>::absMagnetisation()
+{
+	double mag = magnetisation();
+	return fabs(mag);
 }
 
 template <class Model>
@@ -267,9 +286,8 @@ bool SpinGraph<Model>::update(double beta)
 			return 1;
 	}	
 	return  0;
-} 	
-	 
-	
+} 
+
 
 Graph generateRandomGraph(int n, int edges) //randomly generates a graph given number of vertices
 {
