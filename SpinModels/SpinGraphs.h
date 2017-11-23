@@ -55,6 +55,8 @@ class SpinGraph : public Graph, public Model
 {
     public:
 	SpinGraph(int, bool randomize = false);
+	double magnetisation();
+	double absMagnetisation();
 	double actionCont(int, std::vector<int>);
 	double action();
 	bool update(double);
