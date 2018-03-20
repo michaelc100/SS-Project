@@ -84,15 +84,6 @@ int main(int argc, char * argv[])
 
 		double mean_mag = mean(mag_stores, snapshots);
 		std::cout << "Mean magnetisation: " << mean_mag << "\n";
-		//most of this stuff is done in python script, might take out of here
-		/*
-		double var_mag = variance(mag_stores, snapshots);
-		std::cout << "Variance: " << var_mag << "\n";
-		double std_err = sqrt(variance(mag_stores, snapshots))/sqrt(double(snapshots));
-		std::cout << "Standard Error is: " << std_err << "\n";
-		double var_error = jackKnifeVariance(mag_stores, snapshots);
-		std::cout << "Jack Knife obtained error is: " << var_error << "\n";
-		*/
 		std::cout << "---\n";	
 		
 	}

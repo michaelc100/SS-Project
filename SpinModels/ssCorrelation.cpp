@@ -7,10 +7,10 @@ int main(int argc, char * argv[])
 {
 	std::cout.setf(std::ios_base::fixed);
 	int factor, vertices;
-	int length = 35;
+	int length = 10;
 	vertices = length*length;
 	factor = 4;
-	int dc = atoi(argv[1]);
+	//int dc = 0; //to be set if generating a paramgraph 
 	SpinGraph<Ising> rg = generateRandomIsingGraph(vertices, int((vertices*factor)/2), true);
 	//SpinGraph<Ising> rg = generateParametrisedIsingGraph(length, vertices*factor/2, dc, true);
 	double degvar = varianceVector(rg.vertexDegrees());
@@ -28,8 +28,8 @@ int main(int argc, char * argv[])
 		}
 	}
 
-	int vertexPairs = atoi(argv[2]);
-	int targets[vertexPairs]; //vertices dist of (1, 2, 3, 4) away from source
+	int vertexPairs = 1; //to be set according to graph type and size
+	int targets[vertexPairs]; //vertices dist of (1, 2, 3, 4, ...) away from source
 	std::vector<int> meanPaths = rg.BFSsearch(source);
 	for (int i = 0; i < meanPaths.size(); i++)
 	{
@@ -50,13 +50,13 @@ int main(int argc, char * argv[])
 		}
 	}
 
-	double t0 = atof(argv[3]); //initial temp
+	double t0 = 2.0; //initial temp
 	int iterations = 25; //num of unique temps to sample
 	double temp_step = 0.1;
 	double temps[iterations];
 	temps[0] = t0;
 	int markov_updates = 300; //let graph evolve at each new temp
-	int snapshots = 2048;
+	int snapshots = 1024;
 	int spinValues[snapshots]; //will start by simply measuring correlation between two vertices
 	std::cout << "Info: |V| = " << vertices << " Conn. = " << factor << " Degree Variance: " << degvar << " Metropolis updates = " << markov_updates << " Snapshots = " << snapshots << "\n";	
 	
@@ -82,7 +82,7 @@ int main(int argc, char * argv[])
 		for (int k = 0; k < snapshots; k++)
 		{
 			for (int j = 0; j < markov_updates; j++)
-				rg.wolffUpdate(1/(temps[i]));
+				rg.wolffUpdate(1/(temps[i])); //rg.update(1/temps[i]) for metropolis
 
 			double current_mag = rg.magnetisation();						
 			mag_stores[k] = current_mag;
@@ -109,15 +109,6 @@ int main(int argc, char * argv[])
 	
 		double mean_mag = mean(mag_stores, snapshots);
 		std::cout << "Mean magnetisation: " << mean_mag << "\n";
-		//most of this stuff is done in python script, might take out of here
-		/*
-		double var_mag = variance(mag_stores, snapshots);
-		std::cout << "Variance: " << var_mag << "\n";
-		double std_err = sqrt(variance(mag_stores, snapshots))/sqrt(double(snapshots));
-		std::cout << "Standard Error is: " << std_err << "\n";
-		double var_error = jackKnifeVariance(mag_stores, snapshots);
-		std::cout << "Jack Knife obtained error is: " << var_error << "\n";
-		*/
 		std::cout << "---\n";	
 		
 	}	
