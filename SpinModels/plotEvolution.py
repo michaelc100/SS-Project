@@ -14,7 +14,7 @@ plt.style.use('ggplot')
 Script to retrieve info about mc simulation of random graphs from graph evolution
 Then calculates relevant info and produces various plots given these .txt files
 """
-t1, m1, v1, st1, su1, jk1, mags1 = ca.extractInfo(sys.argv[1])
+t1, m1, mags1 = ca.extractInfo(sys.argv[1])
 
 abs_mags1 = np.abs(mags1)
 abs_sterr = sem(abs_mags1, axis = 1)

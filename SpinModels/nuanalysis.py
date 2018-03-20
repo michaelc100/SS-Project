@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
 from scipy.optimize import curve_fit
 from scipy.stats import sem
-from commonAnalysis import extractInfo, criticalTemp, spinspin, correlation_func_fit, tc_correlation_fit, logError, func_linear
+from commonAnalysis import extractInfo, spinspin, correlation_func_fit, tc_correlation_fit, logError, func_linear
 plt.rc('text', usetex = 'true')
 plt.style.use('ggplot')
 
@@ -14,7 +14,7 @@ def xi(spins, distance): #perform curve_fit at a given temp to get correlation l
 	errors = np.sqrt(np.diag(pcov))
 	return [popt[1], errors[1]]
 
-t, means, var, sterr, sus, jk, mags = extractInfo(sys.argv[1])
+t, means, mags = extractInfo(sys.argv[1])
 
 compares_rand = 9
 compares_square = 20

@@ -3,13 +3,14 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-from commonAnalysis import extractInfo, criticalTemp, spinspin, correlation_func_fit, tc_correlation_fit
+from commonAnalysis import extractInfo, spinspin, correlation_func_fit, tc_correlation_fit
 plt.rc('text', usetex = 'true')
 plt.style.use('ggplot')
 
-t, means, var, sterr, sus, jk, mags = extractInfo(sys.argv[1])
-ss, errors = spinspin(sys.argv[1], compares = 8)
+t, means, mags = extractInfo(sys.argv[1])
+ss, errors = spinspin(sys.argv[1], compares = 9) #set compares for no. of spins being correlated
 
+#most of the parameters here should be set according to how the specific data has been generated
 print len(ss), len(errors)
 print len(ss[0])
 
@@ -18,8 +19,8 @@ sus_error = np.zeros(len(t))
 for i, mag in enumerate(np.abs(mags)):
 	sus[i] = np.var(mag, ddof=1)/t[i]
 
-spins = np.array(ss[39])
-sterrs = np.array(errors[39])
+spins = np.array(ss[10]) #10 index is arbitrary, corresponds to specific temp index being looked at
+sterrs = np.array(errors[10])
 distance = np.arange(1, len(spins)+1)
 
 #tstar = t.index(2.269)

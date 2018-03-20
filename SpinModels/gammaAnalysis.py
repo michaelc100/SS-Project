@@ -6,12 +6,12 @@ import re
 import os
 from scipy.stats import sem
 from scipy.optimize import curve_fit
-from commonAnalysis import extractInfo, criticalTemp, logError, func_linear, jackKnife
+from commonAnalysis import extractInfo, logError, func_linear, jackKnife
 
 plt.rc('text', usetex = 'true')
 plt.style.use('ggplot')
 
-t, mean, var, sterr, sus, jk, mags = extractInfo(sys.argv[1])
+t, mean, mags = extractInfo(sys.argv[1])
 
 abs_mags = np.abs(mags)
 mean = np.mean(abs_mags, axis = 1)
